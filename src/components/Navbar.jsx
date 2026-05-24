@@ -52,8 +52,8 @@ export default function Navbar() {
                     {/* Bagian Tengah: Menu Navigasi */}
                     <div className="hidden md:block">
                         <div className="ml-10 flex items-baseline space-x-8">
-                            <Link href="/" className="text-slate-900 hover:text-teal-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                                Beranda
+                            <Link href="/cek-fakta" className="text-slate-900 hover:text-teal-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                                Cek Fakta
                             </Link>
                             <Link href="/literasi" className="text-slate-900 hover:text-teal-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                                 Literasi
