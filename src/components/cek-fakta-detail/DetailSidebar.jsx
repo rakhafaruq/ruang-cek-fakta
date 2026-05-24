@@ -1,46 +1,6 @@
 export default function DetailSidebar({ sidebar }) {
-  const isHoaks = sidebar.indikator.status === "HOAKS";
-  
   return (
     <div className="space-y-6">
-      
-      {/* Indikator Kepalsuan */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-        <h3 className="text-xs font-bold tracking-wider text-slate-400 mb-4 uppercase">
-          Indikator Kepalsuan
-        </h3>
-        
-        <div className="flex items-start gap-4 mb-6">
-          <div className="w-12 h-12 rounded-xl bg-red-100 text-red-600 flex items-center justify-center shrink-0">
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-red-600">{sidebar.indikator.status}</div>
-            <div className="text-xs text-slate-500 mt-1">{sidebar.indikator.description}</div>
-          </div>
-        </div>
-
-        {/* Meter UI */}
-        <div className="relative pt-2">
-          <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase mb-2">
-            <span>Fakta</span>
-            <span>Menyesatkan</span>
-            <span className="text-red-600">Hoaks</span>
-          </div>
-          <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden flex">
-             <div className="h-full bg-emerald-400 w-1/3"></div>
-             <div className="h-full bg-amber-400 w-1/3"></div>
-             <div className="h-full bg-red-600 w-1/3 relative">
-                {/* Indicator dot or highlight */}
-             </div>
-          </div>
-          {/* Active pointer based on scale - hardcoded to right side for HOAKS now */}
-          <div className="absolute top-6 right-0 w-12 h-1 bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]"></div>
-        </div>
-      </div>
-
       {/* Rincian Verifikasi */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
         <h3 className="text-xs font-bold tracking-wider text-slate-400 mb-4 uppercase">

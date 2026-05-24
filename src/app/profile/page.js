@@ -20,7 +20,7 @@ export default function ProfilPage() {
             const {
                 data: { session },
             } = await supabase.auth.getSession();
-            if (!session) return router.push("/login");
+            if (!session) return router.push("/login?callbackUrl=/profile");
 
             setUser(session.user);
 

@@ -31,11 +31,6 @@ export const dummyDetailData = {
     },
   },
   sidebar: {
-    indikator: {
-      status: "HOAKS",
-      description: "Informasi ini sepenuhnya direkayasa.",
-      scale: 100, // 0 for Fakta, 50 for Menyesatkan, 100 for Hoaks
-    },
     rincian: {
       kategori: "Kesehatan Publik",
       terakhirDiperbarui: "13 Agustus 2024, 09:45 WIB",

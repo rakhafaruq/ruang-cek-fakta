@@ -31,8 +31,8 @@ export default function LaporHoaksPage() {
                 data: { session },
             } = await supabase.auth.getSession();
             if (!session) {
-                // Jika belum login, arahkan ke halaman login
-                router.push("/login");
+                // Jika belum login, arahkan ke halaman login dengan callbackUrl
+                router.push("/login?callbackUrl=/lapor");
             } else {
                 setUser(session.user);
                 setCheckingAuth(false);
