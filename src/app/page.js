@@ -1,6 +1,5 @@
 import HeroSearch from "@/components/HeroSearch";
 import HoaxList from "@/components/HoaxList";
-import StatsSection from "@/components/StatsSection";
 
 export const metadata = {
     title: "Ruang Cek Fakta | Platform Literasi Digital & Anti-Hoaks",
@@ -10,14 +9,12 @@ export const metadata = {
 export default function Home() {
     return (
         <div className="min-h-screen bg-brand-bg flex flex-col">
-            {/* Hero Section dengan AI Search */}
+            {/* Hero Section */}
             <HeroSearch />
-
-            {/* Statistik Live */}
-            <StatsSection />
 
             {/* Pantauan Hoaks Terkini */}
             <HoaxList />
         </div>
     );
 }
+

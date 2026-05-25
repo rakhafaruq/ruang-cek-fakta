@@ -26,15 +26,21 @@ export default function DetailContent({ content }) {
           Verifikasi Visual
         </h2>
         
-        {/* Placeholder Image */}
-        <div className="bg-indigo-100 rounded-xl aspect-video flex items-center justify-center relative mb-6 overflow-hidden border border-indigo-50">
-           <svg className="w-16 h-16 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-           </svg>
-           <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm text-xs font-mono px-3 py-1.5 rounded-md text-indigo-900 font-medium">
-             {content.visual.imagePlaceholder}
-           </div>
-        </div>
+        {/* Visual Image or Placeholder */}
+        {content.visual.imageUrl ? (
+          <div className="rounded-xl flex items-center justify-center relative mb-6 overflow-hidden border border-slate-200">
+             <img src={content.visual.imageUrl} alt={content.visual.imagePlaceholder} className="w-full h-auto object-contain max-h-[600px]" />
+          </div>
+        ) : (
+          <div className="bg-indigo-100 rounded-xl aspect-video flex items-center justify-center relative mb-6 overflow-hidden border border-indigo-50">
+             <svg className="w-16 h-16 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+             </svg>
+             <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm text-xs font-mono px-3 py-1.5 rounded-md text-indigo-900 font-medium border border-slate-200 shadow-sm">
+               {content.visual.imagePlaceholder}
+             </div>
+          </div>
+        )}
         
         <p className="leading-relaxed text-slate-700">
           {content.visual.description}

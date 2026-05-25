@@ -36,9 +36,21 @@ function LoginForm() {
 
             if (error) throw error;
 
+            // Cek apakah user adalah admin
+            const { data: roleData } = await supabase
+                .from("user_roles")
+                .select("role")
+                .eq("user_id", data.session.user.id)
+                .single();
+
             setSuccessMsg("Berhasil masuk! Mengalihkan...");
-            // Kembalikan ke halaman asal (callbackUrl) setelah login berhasil
-            router.push(callbackUrl);
+
+            // Admin → langsung ke dashboard admin, user biasa → ke callbackUrl
+            if (roleData?.role === "admin") {
+                router.push("/admin");
+            } else {
+                router.push(callbackUrl);
+            }
 
         } catch (error) {
             setErrorMsg(error.message);

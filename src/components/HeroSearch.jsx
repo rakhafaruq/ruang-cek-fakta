@@ -1,246 +1,214 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-
-// Badge warna berdasarkan label hasil analisis AI
-const getLabelStyle = (label) => {
-    const map = {
-        "Hoaks": { bg: "bg-red-100", text: "text-red-700", border: "border-red-200", dot: "bg-red-500", display: "HOAKS" },
-        "Fakta": { bg: "bg-emerald-100", text: "text-emerald-700", border: "border-emerald-200", dot: "bg-emerald-500", display: "FAKTA" },
-        "Menyesatkan": { bg: "bg-amber-100", text: "text-amber-700", border: "border-amber-200", dot: "bg-amber-500", display: "MENYESATKAN" },
-        "Uncertain": { bg: "bg-slate-100", text: "text-slate-600", border: "border-slate-200", dot: "bg-slate-400", display: "TIDAK PASTI" },
-    };
-    return map[label] || map["Uncertain"];
-};
+import Link from "next/link";
 
 const HOT_TOPICS = [
-    { tag: "#PemiluDamai2026", query: "Pemilu Damai 2026" },
-    { tag: "#AIDeepfake", query: "AI Deepfake video palsu" },
-    { tag: "#KesehatanMasyarakat", query: "hoaks kesehatan masyarakat" },
+    { tag: "#PemiluDamai2026",       query: "pemilu damai 2026",         color: "text-orange-600 bg-orange-50 border-orange-200 hover:bg-orange-100" },
+    { tag: "#AIDeepfake",            query: "AI deepfake video palsu",    color: "text-purple-600 bg-purple-50 border-purple-200 hover:bg-purple-100" },
+    { tag: "#KesehatanMasyarakat",   query: "hoaks kesehatan masyarakat", color: "text-teal-600 bg-teal-50 border-teal-200 hover:bg-teal-100" },
+    { tag: "#VaksinMitos",           query: "mitos vaksin berbahaya",     color: "text-rose-600 bg-rose-50 border-rose-200 hover:bg-rose-100" },
+];
+
+const PLACEHOLDERS = [
+    "Masukkan judul berita yang mencurigakan...",
+    "Contoh: \"Vaksin mengandung microchip\"",
+    "Contoh: \"Gempa diprediksi besok pagi\"",
+    "Cari fakta dari artikel atau URL...",
+    "Contoh: \"Bantuan sosial Rp5 juta untuk semua\"",
+];
+
+const QUICK_ACTIONS = [
+    {
+        id: "browse-hoaks",
+        href: "/cek-fakta?status=HOAKS",
+        label: "Hoaks Terbongkar",
+        desc: "Klaim yang sudah diverifikasi palsu",
+        icon: "M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636",
+        color: "bg-red-50 border-red-200 text-red-700 hover:bg-red-100",
+        iconColor: "text-red-500",
+    },
+    {
+        id: "browse-fakta",
+        href: "/cek-fakta?status=FAKTA",
+        label: "Fakta Valid",
+        desc: "Informasi yang telah terkonfirmasi benar",
+        icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
+        color: "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100",
+        iconColor: "text-emerald-500",
+    },
+    {
+        id: "lapor-hoaks",
+        href: "/lapor",
+        label: "Lapor Hoaks",
+        desc: "Temukan hoaks? Laporkan ke tim kami",
+        icon: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z",
+        color: "bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100",
+        iconColor: "text-amber-500",
+    },
 ];
 
 export default function HeroSearch() {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [result, setResult] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [query, setQuery]               = useState("");
+    const [placeholderIdx, setPlaceholderIdx] = useState(0);
+    const [displayedPlaceholder, setDisplayedPlaceholder] = useState("");
+    const [isTyping, setIsTyping]         = useState(true);
     const router = useRouter();
 
-    // Fungsi utama pencarian
-    const performSearch = async (query) => {
-        if (!query.trim()) return;
+    // Typing animation untuk placeholder
+    useEffect(() => {
+        const target = PLACEHOLDERS[placeholderIdx];
+        let charIdx   = 0;
+        let timeoutId;
 
-        setIsLoading(true);
-        setResult(null);
-
-        try {
-            const response = await fetch("https://api-llm-dot-ruang-cek-fakta.et.r.appspot.com/api/v1/fact_check_with_source", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ text: query }),
-            });
-
-            const data = await response.json();
-            setResult(data);
-        } catch (error) {
-            console.error("Error searching:", error);
-            setResult({
-                status: "error",
-                analysis: {
-                    summary: "Terjadi kesalahan saat memproses permintaan.",
-                    label: "Uncertain",
-                    explanation: "Tidak dapat terhubung ke server analisis. Silakan coba lagi.",
-                    sources: [],
-                },
-            });
-        } finally {
-            setIsLoading(false);
+        if (isTyping) {
+            // Type forward
+            const typeNext = () => {
+                if (charIdx <= target.length) {
+                    setDisplayedPlaceholder(target.slice(0, charIdx));
+                    charIdx++;
+                    timeoutId = setTimeout(typeNext, 45);
+                } else {
+                    // Pause lalu mulai erase
+                    timeoutId = setTimeout(() => setIsTyping(false), 2000);
+                }
+            };
+            typeNext();
+        } else {
+            // Erase backward
+            let cur = target.length;
+            const eraseNext = () => {
+                if (cur >= 0) {
+                    setDisplayedPlaceholder(target.slice(0, cur));
+                    cur--;
+                    timeoutId = setTimeout(eraseNext, 25);
+                } else {
+                    // Next placeholder
+                    setPlaceholderIdx((i) => (i + 1) % PLACEHOLDERS.length);
+                    setIsTyping(true);
+                }
+            };
+            eraseNext();
         }
-    };
 
-    const handleSearch = async (e) => {
+        return () => clearTimeout(timeoutId);
+    }, [placeholderIdx, isTyping]);
+
+    const handleSearch = (e) => {
         e.preventDefault();
-        await performSearch(searchQuery);
+        const q = query.trim();
+        if (!q) return;
+        router.push(`/cek-fakta?q=${encodeURIComponent(q)}`);
     };
 
-    // Hot topic diklik → isi search bar + langsung cari
-    const handleHotTopicClick = async (topic) => {
-        setSearchQuery(topic.query);
-        await performSearch(topic.query);
+    const handleHotTopic = (topic) => {
+        router.push(`/cek-fakta?q=${encodeURIComponent(topic.query)}`);
     };
 
     return (
-        <section className="relative pt-20 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
-            {/* Teks Heading & Subtitle */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight font-sans mb-6">
-                Melawan Hoaks, <br className="hidden sm:block" />
+        <section className="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center overflow-hidden">
+
+            {/* Subtle background blobs */}
+            <div className="absolute -top-32 -left-32 w-96 h-96 bg-cyan-100/40 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -top-20 -right-32 w-80 h-80 bg-teal-100/30 rounded-full blur-3xl pointer-events-none" />
+
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 bg-cyan-50 border border-cyan-200 text-cyan-700 text-xs font-semibold px-3.5 py-1.5 rounded-full mb-6 shadow-sm">
+                <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse" />
+                Platform Literasi Digital &amp; Anti-Hoaks
+            </div>
+
+            {/* Heading */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight mb-5 leading-tight">
+                Melawan Hoaks,{" "}
+                <br className="hidden sm:block" />
                 <span className="text-cyan-600">Bangun Literasi.</span>
             </h1>
 
-            <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-10">
-                Validasi informasi instan dan kembangkan kemampuan digital Anda untuk mendukung perdamaian dan keadilan{" "}
+            <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed">
+                Validasi informasi instan dan kembangkan kemampuan digital Anda untuk
+                mendukung perdamaian dan keadilan{" "}
                 <span className="font-semibold text-slate-700">(SDG 16)</span>.
             </p>
 
             {/* Search Bar */}
-            <div className="max-w-3xl mx-auto relative">
-                <form onSubmit={handleSearch} className="relative flex items-center">
+            <div className="max-w-3xl mx-auto">
+                <form onSubmit={handleSearch} className="relative flex items-center shadow-lg rounded-full">
                     <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                        <svg className="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </div>
 
                     <input
-                        type="text"
                         id="hero-search-input"
-                        className="block w-full bg-white border border-slate-300 rounded-full py-4 pl-14 pr-36 text-slate-900 placeholder-slate-400 shadow-sm focus:outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-600/20 transition-all sm:text-lg"
-                        placeholder="Masukkan judul berita atau URL yang mencurigakan..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        type="text"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        placeholder={displayedPlaceholder || "Cari berita atau klaim..."}
+                        className="block w-full bg-white border border-slate-300 rounded-full py-4 pl-13 pr-40 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-600/20 transition-all sm:text-lg"
                     />
+
+                    {query && (
+                        <button
+                            type="button"
+                            onClick={() => setQuery("")}
+                            className="absolute right-36 text-slate-400 hover:text-slate-600 transition-colors p-1"
+                        >
+                        </button>
+                    )}
 
                     <button
                         id="hero-search-button"
                         type="submit"
-                        disabled={isLoading}
-                        className="cursor-pointer absolute right-2.5 inset-y-2.5 bg-cyan-600 hover:bg-cyan-700 disabled:bg-cyan-400 text-white rounded-full px-6 text-sm font-medium transition-colors focus:outline-none flex items-center gap-2"
+                        className="cursor-pointer absolute right-2.5 inset-y-2.5 bg-cyan-600 hover:bg-cyan-700 active:bg-cyan-800 text-white rounded-full px-7 text-sm font-semibold transition-all hover:shadow-md focus:outline-none flex items-center gap-2"
                     >
-                        {isLoading ? (
-                            <>
-                                <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                                </svg>
-                                Menganalisis...
-                            </>
-                        ) : (
-                            "Cari Fakta"
-                        )}
+                        Cari Fakta
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
                     </button>
                 </form>
-            </div>
 
-            {/* Hot Topics */}
-            <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <span className="text-sm text-slate-500 font-medium">Topik Hangat:</span>
-                <div className="flex flex-wrap justify-center gap-2">
-                    {HOT_TOPICS.map((topic) => (
-                        <button
-                            key={topic.tag}
-                            onClick={() => handleHotTopicClick(topic)}
-                            className="cursor-pointer text-xs text-orange-600 bg-orange-50 hover:bg-orange-100 border border-orange-200 px-3 py-1.5 rounded-full font-medium transition-all hover:scale-105"
-                        >
-                            {topic.tag}
-                        </button>
-                    ))}
+                {/* Hot Topics */}
+                <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-2.5">
+                    <span className="text-xs text-slate-400 font-medium flex-shrink-0">Topik Hangat:</span>
+                    <div className="flex flex-wrap justify-center gap-2">
+                        {HOT_TOPICS.map((topic) => (
+                            <button
+                                key={topic.tag}
+                                onClick={() => handleHotTopic(topic)}
+                                className={`cursor-pointer text-xs px-3 py-1.5 rounded-full font-medium transition-all hover:scale-105 active:scale-95`}
+                            >
+                                {topic.tag}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
 
-            {/* Hasil Analisis AI */}
-            {(isLoading || result) && (
-                <div className="mt-10 max-w-3xl mx-auto">
-                    {/* Skeleton Loading */}
-                    {isLoading && (
-                        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm animate-pulse">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-24 h-6 bg-slate-200 rounded-full"></div>
-                                <div className="w-32 h-4 bg-slate-100 rounded"></div>
-                            </div>
-                            <div className="space-y-2">
-                                <div className="h-4 bg-slate-100 rounded w-full"></div>
-                                <div className="h-4 bg-slate-100 rounded w-5/6"></div>
-                                <div className="h-4 bg-slate-100 rounded w-4/6"></div>
-                            </div>
+            {/* Quick Action Cards */}
+            <div className="mt-12 max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {QUICK_ACTIONS.map((action) => (
+                    <Link
+                        key={action.id}
+                        id={action.id}
+                        href={action.href}
+                        className={`flex items-center gap-3 p-4 rounded-2xl border text-left transition-all hover:-translate-y-0.5 hover:shadow-md ${action.color}`}
+                    >
+                        <div className={`w-9 h-9 rounded-xl bg-white/70 flex items-center justify-center flex-shrink-0 ${action.iconColor}`}>
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={action.icon} />
+                            </svg>
                         </div>
-                    )}
-
-                    {/* Result Card */}
-                    {!isLoading && result && result.analysis && (
-                        <div className="bg-white border border-slate-200 rounded-2xl shadow-md overflow-hidden text-left animate-in fade-in duration-300">
-                            {/* Header Result */}
-                            {(() => {
-                                const style = getLabelStyle(result.analysis.label);
-                                return (
-                                    <div className={`px-6 py-4 border-b ${style.bg} ${style.border} flex items-center justify-between`}>
-                                        <div className="flex items-center gap-3">
-                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${style.bg} ${style.text} ${style.border}`}>
-                                                <span className={`w-2 h-2 rounded-full ${style.dot}`}></span>
-                                                {style.display}
-                                            </span>
-                                            <span className="text-sm text-slate-500 font-medium">Hasil Analisis AI</span>
-                                        </div>
-                                        <button
-                                            onClick={() => setResult(null)}
-                                            className="cursor-pointer text-slate-400 hover:text-slate-600 transition-colors text-lg leading-none"
-                                            aria-label="Tutup hasil"
-                                        >
-                                            ×
-                                        </button>
-                                    </div>
-                                );
-                            })()}
-
-                            {/* Body Result */}
-                            <div className="p-6 space-y-4">
-                                {/* Summary */}
-                                {result.analysis.summary && (
-                                    <div>
-                                        <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Ringkasan</h3>
-                                        <p className="text-slate-800 leading-relaxed">{result.analysis.summary}</p>
-                                    </div>
-                                )}
-
-                                {/* Penjelasan */}
-                                {result.analysis.explanation && (
-                                    <div>
-                                        <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Penjelasan</h3>
-                                        <p className="text-slate-600 text-sm leading-relaxed">{result.analysis.explanation}</p>
-                                    </div>
-                                )}
-
-                                {/* Sumber */}
-                                {result.analysis.sources && result.analysis.sources.length > 0 && (
-                                    <div>
-                                        <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Sumber Referensi</h3>
-                                        <ul className="space-y-1.5">
-                                            {result.analysis.sources.slice(0, 3).map((source, i) => (
-                                                <li key={i}>
-                                                    <a
-                                                        href={typeof source === "string" ? source : source.url}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-sm text-cyan-600 hover:text-cyan-800 hover:underline flex items-center gap-1.5"
-                                                    >
-                                                        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                                        </svg>
-                                                        {typeof source === "string" ? source : (source.title || source.url)}
-                                                    </a>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Footer — CTA ke halaman Cek Fakta */}
-                            <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-                                <span className="text-xs text-slate-400">Dianalisis oleh AI Ruang Cek Fakta</span>
-                                <button
-                                    onClick={() => router.push(`/cek-fakta`)}
-                                    className="cursor-pointer text-xs font-semibold text-cyan-600 hover:text-cyan-800 flex items-center gap-1"
-                                >
-                                    Lihat Semua Cek Fakta
-                                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </button>
-                            </div>
+                        <div>
+                            <div className="text-sm font-bold leading-tight">{action.label}</div>
+                            <div className="text-xs opacity-70 mt-0.5 leading-snug">{action.desc}</div>
                         </div>
-                    )}
-                </div>
-            )}
+                    </Link>
+                ))}
+            </div>
         </section>
     );
 }

@@ -40,7 +40,7 @@ export default function CekFaktaDetail() {
             // Fetch artikel terkait (kategori sama, kecuali artikel ini, maks 6)
             const { data: related } = await supabase
                 .from("hoax_db")
-                .select("id, slug, status, category, title, description, published_at")
+                .select("id, slug, status, category, title, description, published_at, visual_image_url")
                 .eq("category", data.category)
                 .neq("slug", slug)
                 .order("published_at", { ascending: false })
@@ -49,7 +49,7 @@ export default function CekFaktaDetail() {
             // Juga ambil artikel terbaru agar total 6 item (tanpa duplikat)
             const { data: latest } = await supabase
                 .from("hoax_db")
-                .select("id, slug, status, category, title, description, published_at")
+                .select("id, slug, status, category, title, description, published_at, visual_image_url")
                 .neq("slug", slug)
                 .order("published_at", { ascending: false })
                 .limit(6);
@@ -144,6 +144,7 @@ export default function CekFaktaDetail() {
         visual: {
             imagePlaceholder: article.visual_image_label || "Dokumen Verifikasi Visual",
             description: article.visual_description || "",
+            imageUrl: article.visual_image_url || null,
         },
         kesimpulan: {
             title: article.kesimpulan_title,

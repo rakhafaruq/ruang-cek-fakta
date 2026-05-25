@@ -42,8 +42,27 @@ export default function FactCard({ fact }) {
   }
 
   return (
-    <div className="bg-white p-6 border border-slate-200 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
-      {/* Header: Status and Time */}
+    <div className="bg-white border border-slate-200 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full overflow-hidden">
+      {/* Gambar */}
+      {fact.visual_image_url ? (
+        <div className="aspect-video w-full overflow-hidden bg-slate-100 border-b border-slate-100 relative group">
+          <img 
+            src={fact.visual_image_url} 
+            alt={fact.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </div>
+      ) : (
+        <div className="aspect-video w-full bg-slate-50 border-b border-slate-100 flex items-center justify-center text-slate-300">
+          <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+      )}
+
+      <div className="p-6 flex flex-col flex-grow">
+        {/* Header: Status and Time */}
       <div className="flex justify-between items-center mb-4">
         <div className={`inline-flex items-center px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase ${statusStyles(fact.status)}`}>
           <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${dotColor(fact.status)}`}></span>
@@ -70,6 +89,7 @@ export default function FactCard({ fact }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
           </svg>
         </Link>
+      </div>
       </div>
     </div>
   );

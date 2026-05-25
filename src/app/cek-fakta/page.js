@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import SidebarFilter from "@/components/cek-fakta-list/SidebarFilter";
 import SearchBar from "@/components/cek-fakta-list/SearchBar";
 import FactCard from "@/components/cek-fakta-list/FactCard";
@@ -9,12 +10,13 @@ import { supabase } from "@/lib/supabaseClient";
 
 const ITEMS_PER_PAGE = 9;
 
-export default function CekFaktaPage() {
+function CekFaktaContent() {
+    const searchParams = useSearchParams();
     const [allFacts, setAllFacts] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const [searchQuery, setSearchQuery] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState("Semua");
+    const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
+    const [selectedStatus, setSelectedStatus] = useState(searchParams.get("status") || "Semua");
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -24,7 +26,7 @@ export default function CekFaktaPage() {
             setLoading(true);
             const { data, error } = await supabase
                 .from("hoax_db")
-                .select("id, slug, status, category, title, description, published_at, author")
+                .select("id, slug, status, category, title, description, published_at, author, visual_image_url")
                 .order("published_at", { ascending: false });
 
             if (!error && data) {
@@ -140,5 +142,17 @@ export default function CekFaktaPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function CekFaktaPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-brand-bg pt-12 pb-24 flex items-center justify-center">
+                <div className="animate-pulse text-slate-400 font-mono text-sm">Memuat...</div>
+            </div>
+        }>
+            <CekFaktaContent />
+        </Suspense>
     );
 }

@@ -72,10 +72,7 @@ export default function LiterasiPusat() {
                     {/* Visual Aset */}
                     <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-xl border border-slate-200 bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center">
                         <div className="absolute inset-0 opacity-40 bg-[radial-gradient(#0891b2_1px,transparent_1px)] [background-size:16px_16px]"></div>
-                        <svg className="w-24 h-24 text-teal-500/30 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                        <div className="absolute bottom-4 left-4 text-xs font-mono text-slate-400">Visual Workspace Interface</div>
+                        <img src="/literasi-digital.jpg" alt="Literasi" className="w-full h-full object-cover" />
                     </div>
                 </div>
             </section>
