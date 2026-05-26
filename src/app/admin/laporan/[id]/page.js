@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
 
 const STATUS_OPTIONS = [
@@ -165,10 +166,12 @@ export default function DetailLaporanPage() {
                         {report.image_url && (
                             <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
                                 <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">Bukti Visual</h2>
-                                <img
+                                <Image
                                     src={report.image_url}
                                     alt="Bukti laporan"
-                                    className="rounded-lg max-h-80 object-contain border border-slate-200"
+                                    width={800}
+                                    height={500}
+                                    className="rounded-lg max-h-80 object-contain border border-slate-200 w-full"
                                 />
                             </div>
                         )}

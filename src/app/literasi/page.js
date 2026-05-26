@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function LiterasiPusat() {
@@ -72,7 +73,7 @@ export default function LiterasiPusat() {
                     {/* Visual Aset */}
                     <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-xl border border-slate-200 bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center">
                         <div className="absolute inset-0 opacity-40 bg-[radial-gradient(#0891b2_1px,transparent_1px)] [background-size:16px_16px]"></div>
-                        <img src="/literasi-digital.jpg" alt="Literasi" className="w-full h-full object-cover" />
+                        <Image src="/literasi-digital.jpg" alt="Ilustrasi Literasi Digital" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
                     </div>
                 </div>
             </section>

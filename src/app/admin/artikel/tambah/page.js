@@ -69,6 +69,7 @@ function TambahArtikelForm() {
 
     // Auto-generate slug saat title berubah
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         if (title) setSlug(generateSlug(title));
     }, [title]);
 
@@ -352,6 +353,7 @@ Paragraf kedua analisis..."
 
                             {imagePreview ? (
                                 <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-50">
+                                    {/* eslint-disable-next-line @next/next/no-img-element -- blob URL lokal dari file upload, tidak bisa dioptimasi oleh next/image */}
                                     <img
                                         src={imagePreview}
                                         alt="Preview gambar verifikasi"

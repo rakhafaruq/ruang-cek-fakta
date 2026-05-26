@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
@@ -57,10 +57,13 @@ export default function DetailMateriLiterasi() {
         fetchMateriData();
     }, [modulId, babId]);
 
-    // Reset state kuis jika pengguna berpindah bab
-    useEffect(() => {
+    // Reset state kuis jika pengguna berpindah bab (useLayoutEffect agar tidak trigger cascading re-render)
+    useLayoutEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSelectedOption(null);
+         
         setShowExplanation(false);
+         
         setIsCorrect(false);
     }, [babId]);
 

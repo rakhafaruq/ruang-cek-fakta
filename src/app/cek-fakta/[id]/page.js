@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, notFound } from "next/navigation";
+import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
 
 import Breadcrumbs from "@/components/cek-fakta-detail/Breadcrumbs";
@@ -115,9 +116,9 @@ export default function CekFaktaDetail() {
                     <p className="text-6xl font-bold text-slate-200 mb-4">404</p>
                     <h2 className="text-xl font-bold text-slate-800 mb-2">Artikel Tidak Ditemukan</h2>
                     <p className="text-slate-500">Artikel yang Anda cari tidak ada atau telah dihapus.</p>
-                    <a href="/cek-fakta" className="mt-6 inline-block text-teal-700 font-semibold underline">
+                    <Link href="/cek-fakta" className="mt-6 inline-block text-teal-700 font-semibold underline">
                         Kembali ke Cek Fakta
-                    </a>
+                    </Link>
                 </div>
             </div>
         );

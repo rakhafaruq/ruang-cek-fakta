@@ -49,6 +49,16 @@ function StatCard({ label, value, color, icon }) {
     );
 }
 
+// SortIcon harus dideklarasikan di luar komponen induk agar tidak dibuat ulang setiap render
+function SortIcon({ col, sortBy, sortAsc }) {
+    return (
+        <svg className={`w-3 h-3 ml-1 inline transition-colors ${sortBy === col ? "text-[#005B5C]" : "text-slate-300"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5"
+                d={sortBy === col && sortAsc ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
+        </svg>
+    );
+}
+
 function SkeletonRow() {
     return (
         <tr className="animate-pulse">
@@ -137,6 +147,9 @@ export default function KelolaArtikelPage() {
         setLoading(false);
     }, [page, sortBy, sortAsc, filterStatus, filterCategory, debouncedSearch]);
 
+    // fetchArticles dibungkus useCallback sehingga referensinya stabil.
+    // Ini aman karena setState terjadi setelah await (async), bukan sinkron.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     useEffect(() => { fetchArticles(); }, [fetchArticles]);
 
     // ── Handlers ──
@@ -181,13 +194,6 @@ export default function KelolaArtikelPage() {
         new Date(d).toLocaleDateString("id-ID", {
             day: "2-digit", month: "short", year: "numeric",
         });
-
-    const SortIcon = ({ col }) => (
-        <svg className={`w-3 h-3 ml-1 inline transition-colors ${sortBy === col ? "text-[#005B5C]" : "text-slate-300"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5"
-                d={sortBy === col && sortAsc ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
-        </svg>
-    );
 
     return (
         <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6">
@@ -334,19 +340,19 @@ export default function KelolaArtikelPage() {
                                     />
                                 </th>
                                 <th className="px-4 py-3.5 cursor-pointer hover:text-slate-800 select-none" onClick={() => toggleSort("title")}>
-                                    Judul Artikel <SortIcon col="title" />
+                                    Judul Artikel <SortIcon col="title" sortBy={sortBy} sortAsc={sortAsc} />
                                 </th>
                                 <th className="px-4 py-3.5 cursor-pointer hover:text-slate-800 select-none" onClick={() => toggleSort("category")}>
-                                    Kategori <SortIcon col="category" />
+                                    Kategori <SortIcon col="category" sortBy={sortBy} sortAsc={sortAsc} />
                                 </th>
                                 <th className="px-4 py-3.5 cursor-pointer hover:text-slate-800 select-none" onClick={() => toggleSort("status")}>
-                                    Status <SortIcon col="status" />
+                                    Status <SortIcon col="status" sortBy={sortBy} sortAsc={sortAsc} />
                                 </th>
                                 <th className="px-4 py-3.5 cursor-pointer hover:text-slate-800 select-none" onClick={() => toggleSort("author")}>
-                                    Penulis <SortIcon col="author" />
+                                    Penulis <SortIcon col="author" sortBy={sortBy} sortAsc={sortAsc} />
                                 </th>
                                 <th className="px-4 py-3.5 cursor-pointer hover:text-slate-800 select-none" onClick={() => toggleSort("published_at")}>
-                                    Tanggal <SortIcon col="published_at" />
+                                    Tanggal <SortIcon col="published_at" sortBy={sortBy} sortAsc={sortAsc} />
                                 </th>
                                 <th className="px-4 py-3.5 pr-6 text-right">Aksi</th>
                             </tr>

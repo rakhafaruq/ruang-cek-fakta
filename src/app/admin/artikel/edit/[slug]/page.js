@@ -409,6 +409,7 @@ function EditArtikelForm() {
                                             Gambar Baru
                                         </span>
                                     </div>
+                                    {/* eslint-disable-next-line @next/next/no-img-element -- blob URL lokal dari file upload */}
                                     <img src={imagePreview} alt="Preview baru" className="w-full max-h-64 object-contain" />
                                     <div className="absolute top-2 right-2 flex gap-2">
                                         <label className="cursor-pointer bg-white/90 hover:bg-white text-slate-700 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm transition-colors">
@@ -440,6 +441,7 @@ function EditArtikelForm() {
                                             Gambar Saat Ini
                                         </span>
                                     </div>
+                                    {/* eslint-disable-next-line @next/next/no-img-element -- blob URL lokal dari file upload */}
                                     <img src={existingImageUrl} alt="Gambar artikel saat ini" className="w-full max-h-64 object-contain" />
                                     <div className="absolute top-2 right-2 flex gap-2">
                                         <label className="cursor-pointer bg-white/90 hover:bg-white text-slate-700 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm transition-colors">

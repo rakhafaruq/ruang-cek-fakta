@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
@@ -35,9 +36,11 @@ export default function Navbar() {
         };
     }, []);
 
-    // Tutup mobile menu saat navigasi
-    useEffect(() => {
+    // Tutup mobile menu saat navigasi (useLayoutEffect agar tidak trigger cascading re-render)
+    useLayoutEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsMobileMenuOpen(false);
+         
         setIsDropdownOpen(false);
     }, [pathname]);
 
@@ -110,9 +113,11 @@ export default function Navbar() {
                                     className="flex items-center focus:outline-none"
                                 >
                                     <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden border-2 border-[#005B5C] cursor-pointer">
-                                        <img
+                                        <Image
                                             src={user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user.user_metadata?.full_name || user.email.split("@")[0]}&background=005B5C&color=fff`}
                                             alt="User Profile"
+                                            width={40}
+                                            height={40}
                                             className="w-full h-full object-cover"
                                         />
                                     </div>
@@ -203,9 +208,11 @@ export default function Navbar() {
                                 <div className="flex items-center justify-between px-3 py-2">
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-[#005B5C]">
-                                            <img
+                                            <Image
                                                 src={user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user.user_metadata?.full_name || user.email.split("@")[0]}&background=005B5C&color=fff`}
                                                 alt="User Profile"
+                                                width={32}
+                                                height={32}
                                                 className="w-full h-full object-cover"
                                             />
                                         </div>

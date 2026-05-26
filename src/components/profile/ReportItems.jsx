@@ -1,4 +1,5 @@
 import StatusBadge from "./StatusBadge";
+import Image from "next/image";
 
 export default function ReportItem({ report }) {
     const dateStr = new Date(report.created_at).toLocaleDateString("id-ID", {
@@ -11,7 +12,7 @@ export default function ReportItem({ report }) {
         <div className="p-6 flex flex-col md:flex-row gap-6 hover:bg-slate-50/80 transition-colors">
             <div className="flex-shrink-0">
                 {report.evidence_img ? (
-                    <img src={report.evidence_img} alt="Bukti" className="w-full md:w-32 h-32 md:h-24 rounded-lg object-cover border border-slate-200" />
+                    <Image src={report.evidence_img} alt="Bukti" width={128} height={96} className="w-full md:w-32 h-32 md:h-24 rounded-lg object-cover border border-slate-200" />
                 ) : (
                     <div className="w-full md:w-32 h-32 md:h-24 rounded-lg bg-slate-100 border border-slate-200 flex flex-col items-center justify-center text-slate-400">
                         <span className="text-[10px] font-bold uppercase tracking-widest">No Image</span>

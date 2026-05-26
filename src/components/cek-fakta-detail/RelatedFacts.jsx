@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function RelatedFacts({ facts }) {
   const getBadgeStyle = (status) => {
@@ -55,10 +56,12 @@ export default function RelatedFacts({ facts }) {
             {/* Image Area */}
             <div className="bg-slate-100 aspect-video relative border-b border-slate-100 overflow-hidden group-hover:opacity-90 transition-opacity">
               {fact.visual_image_url ? (
-                <img 
+                <Image 
                   src={fact.visual_image_url} 
                   alt={fact.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-slate-300 bg-indigo-50/50">

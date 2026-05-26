@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function FactCard({ fact }) {
   const getStatusStyles = (status) => {
@@ -46,10 +47,12 @@ export default function FactCard({ fact }) {
       {/* Gambar */}
       {fact.visual_image_url ? (
         <div className="aspect-video w-full overflow-hidden bg-slate-100 border-b border-slate-100 relative group">
-          <img 
+          <Image 
             src={fact.visual_image_url} 
             alt={fact.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>

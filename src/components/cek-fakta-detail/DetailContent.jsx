@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function DetailContent({ content }) {
   return (
     <div className="space-y-10 text-brand-text">
@@ -29,7 +31,7 @@ export default function DetailContent({ content }) {
         {/* Visual Image or Placeholder */}
         {content.visual.imageUrl ? (
           <div className="rounded-xl flex items-center justify-center relative mb-6 overflow-hidden border border-slate-200">
-             <img src={content.visual.imageUrl} alt={content.visual.imagePlaceholder} className="w-full h-auto object-contain max-h-[600px]" />
+             <Image src={content.visual.imageUrl} alt={content.visual.imagePlaceholder} width={800} height={600} className="w-full h-auto object-contain max-h-[600px]" />
           </div>
         ) : (
           <div className="bg-indigo-100 rounded-xl aspect-video flex items-center justify-center relative mb-6 overflow-hidden border border-indigo-50">

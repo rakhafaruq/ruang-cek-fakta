@@ -145,6 +145,9 @@ export default function LaporanMasukPage() {
         setLoading(false);
     }, [activeTab, page, debouncedSearch]);
 
+    // fetchReports dibungkus useCallback sehingga referensinya stabil (tidak berubah tiap render).
+    // Ini aman karena setState terjadi setelah await (async), bukan sinkron.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     useEffect(() => { fetchReports(); }, [fetchReports]);
 
     const totalPages = Math.ceil(totalCount / PAGE_SIZE);
