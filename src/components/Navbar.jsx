@@ -40,7 +40,7 @@ export default function Navbar() {
     useLayoutEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsMobileMenuOpen(false);
-         
+
         setIsDropdownOpen(false);
     }, [pathname]);
 
@@ -65,6 +65,8 @@ export default function Navbar() {
         { href: "/tentang-kami", label: "Tentang Kami" },
     ];
 
+    const userInitial = user?.user_metadata?.full_name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || "A";
+
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 bg-brand-surface/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -84,9 +86,7 @@ export default function Navbar() {
                                     key={link.href}
                                     href={link.href}
                                     className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                                        pathname === link.href || pathname.startsWith(link.href + "/")
-                                            ? "text-teal-700 font-semibold"
-                                            : "text-slate-900 hover:text-teal-700"
+                                        pathname === link.href || pathname.startsWith(link.href + "/") ? "text-teal-700 font-semibold" : "text-slate-900 hover:text-teal-700"
                                     }`}
                                 >
                                     {link.label}
@@ -98,29 +98,15 @@ export default function Navbar() {
                     {/* Bagian Kanan: Auth + Lapor Hoaks */}
                     <div className="flex items-center gap-4">
                         {/* Tombol Lapor Hoaks — cek login dulu */}
-                        <button
-                            onClick={handleLaporClick}
-                            className="hidden md:block cursor-pointer border border-teal-700 text-teal-700 hover:bg-teal-700 hover:text-white px-4 py-2 rounded-full text-sm font-medium transition-all"
-                        >
+                        <button onClick={handleLaporClick} className="hidden md:block cursor-pointer border border-teal-700 text-teal-700 hover:bg-teal-700 hover:text-white px-4 py-2 rounded-full text-sm font-medium transition-all">
                             Lapor Hoaks
                         </button>
 
                         {user ? (
                             // Tampilan JIKA USER SUDAH LOGIN
                             <div className="relative">
-                                <button
-                                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                    className="flex items-center focus:outline-none"
-                                >
-                                    <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden border-2 border-[#005B5C] cursor-pointer">
-                                        <Image
-                                            src={user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user.user_metadata?.full_name || user.email.split("@")[0]}&background=005B5C&color=fff`}
-                                            alt="User Profile"
-                                            width={40}
-                                            height={40}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
+                                <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="flex items-center focus:outline-none">
+                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-teal-500 to-[#005B5C] flex items-center justify-center text-white text-sm font-bold">{userInitial}</div>
                                 </button>
 
                                 {isDropdownOpen && (
@@ -129,11 +115,7 @@ export default function Navbar() {
                                             <p className="text-sm text-slate-900 font-semibold truncate">{user.user_metadata?.full_name || user.email.split("@")[0]}</p>
                                             <p className="text-xs text-slate-500 truncate">{user.email}</p>
                                         </div>
-                                        <Link
-                                            href="/profile"
-                                            className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors"
-                                            onClick={() => setIsDropdownOpen(false)}
-                                        >
+                                        <Link href="/profile" className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors" onClick={() => setIsDropdownOpen(false)}>
                                             Profil Saya
                                         </Link>
                                         <button
@@ -185,9 +167,7 @@ export default function Navbar() {
                                 key={link.href}
                                 href={link.href}
                                 className={`block px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
-                                    pathname === link.href || pathname.startsWith(link.href + "/")
-                                        ? "bg-teal-50 text-teal-700 font-semibold"
-                                        : "text-slate-700 hover:bg-slate-50 hover:text-teal-700"
+                                    pathname === link.href || pathname.startsWith(link.href + "/") ? "bg-teal-50 text-teal-700 font-semibold" : "text-slate-700 hover:bg-slate-50 hover:text-teal-700"
                                 }`}
                             >
                                 {link.label}
@@ -195,10 +175,7 @@ export default function Navbar() {
                         ))}
 
                         {/* Lapor Hoaks (Mobile) */}
-                        <button
-                            onClick={handleLaporClick}
-                            className="w-full cursor-pointer text-left px-3 py-2.5 rounded-md text-sm font-medium text-teal-700 hover:bg-teal-50 transition-colors border border-teal-200 mt-2"
-                        >
+                        <button onClick={handleLaporClick} className="w-full cursor-pointer text-left px-3 py-2.5 rounded-md text-sm font-medium text-teal-700 hover:bg-teal-50 transition-colors border border-teal-200 mt-2">
                             Lapor Hoaks
                         </button>
 
@@ -221,18 +198,12 @@ export default function Navbar() {
                                             <p className="text-xs text-slate-500">{user.email}</p>
                                         </div>
                                     </div>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="cursor-pointer text-xs font-medium text-red-600 hover:text-red-700"
-                                    >
+                                    <button onClick={handleLogout} className="cursor-pointer text-xs font-medium text-red-600 hover:text-red-700">
                                         Keluar
                                     </button>
                                 </div>
                             ) : (
-                                <Link
-                                    href="/login"
-                                    className="block w-full text-center px-3 py-2.5 bg-[#005B5C] text-white rounded-md text-sm font-medium hover:bg-[#004748] transition-colors"
-                                >
+                                <Link href="/login" className="block w-full text-center px-3 py-2.5 bg-[#005B5C] text-white rounded-md text-sm font-medium hover:bg-[#004748] transition-colors">
                                     Masuk
                                 </Link>
                             )}
